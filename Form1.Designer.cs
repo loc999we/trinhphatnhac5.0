@@ -32,15 +32,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
             this.indicator = new Guna.UI2.WinForms.Guna2Shapes();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.labelSongTitle = new System.Windows.Forms.Label();
+            this.btnClose = new Guna.UI2.WinForms.Guna2ImageButton();
             this.guna2Button4 = new Guna.UI2.WinForms.Guna2Button();
             this.btnPlaying = new Guna.UI2.WinForms.Guna2Button();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnExplore = new Guna.UI2.WinForms.Guna2Button();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.labelSongTitle = new System.Windows.Forms.Label();
-            this.btnClose = new Guna.UI2.WinForms.Guna2ImageButton();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnShuffle = new Guna.UI2.WinForms.Guna2ImageButton();
             this.btnDelete = new Guna.UI2.WinForms.Guna2ImageButton();
             this.label3 = new System.Windows.Forms.Label();
             this.labeCurrentTime = new System.Windows.Forms.Label();
@@ -50,24 +51,26 @@
             this.guna2ImageButton5 = new Guna.UI2.WinForms.Guna2ImageButton();
             this.btnBack = new Guna.UI2.WinForms.Guna2ImageButton();
             this.TrackBar1 = new Guna.UI2.WinForms.Guna2TrackBar();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.guna2PictureBox1 = new Guna.UI2.WinForms.Guna2PictureBox();
-            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.TrackList = new System.Windows.Forms.ListBox();
-            this.btnSelect = new System.Windows.Forms.Button();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
+            this.guna2PictureBox1 = new Guna.UI2.WinForms.Guna2PictureBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.btnSelect = new System.Windows.Forms.Button();
+            this.btnClear = new Guna.UI2.WinForms.Guna2ImageButton();
+            this.btnSort = new Guna.UI2.WinForms.Guna2ImageButton();
+            this.TrackList = new System.Windows.Forms.ListBox();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel3.SuspendLayout();
-            this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.guna2PictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.guna2PictureBox1)).BeginInit();
             this.tabPage2.SuspendLayout();
+            this.tabControl1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -99,6 +102,42 @@
             this.indicator.TabIndex = 7;
             this.indicator.Text = "guna2Shapes1";
             this.indicator.Zoom = 80;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.Color.White;
+            this.panel2.Controls.Add(this.labelSongTitle);
+            this.panel2.Controls.Add(this.btnClose);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(227, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1565, 88);
+            this.panel2.TabIndex = 1;
+            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
+            // 
+            // labelSongTitle
+            // 
+            this.labelSongTitle.AutoSize = true;
+            this.labelSongTitle.Font = new System.Drawing.Font("Book Antiqua", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelSongTitle.Location = new System.Drawing.Point(19, 16);
+            this.labelSongTitle.Name = "labelSongTitle";
+            this.labelSongTitle.Size = new System.Drawing.Size(305, 51);
+            this.labelSongTitle.TabIndex = 3;
+            this.labelSongTitle.Text = "SONG TITLE ";
+            // 
+            // btnClose
+            // 
+            this.btnClose.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnClose.HoverState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnClose.Image = global::trinhphatnhac5._0.Properties.Resources.close;
+            this.btnClose.ImageOffset = new System.Drawing.Point(0, 0);
+            this.btnClose.ImageRotate = 0F;
+            this.btnClose.Location = new System.Drawing.Point(1474, 13);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.PressedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnClose.Size = new System.Drawing.Size(64, 54);
+            this.btnClose.TabIndex = 0;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // guna2Button4
             // 
@@ -168,51 +207,18 @@
             this.btnExplore.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(248)))), ((int)(((byte)(250)))));
             this.btnExplore.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.btnExplore.ForeColor = System.Drawing.Color.Black;
-            this.btnExplore.Location = new System.Drawing.Point(0, 439);
+            this.btnExplore.Location = new System.Drawing.Point(6, 439);
             this.btnExplore.Name = "btnExplore";
             this.btnExplore.Size = new System.Drawing.Size(210, 66);
             this.btnExplore.TabIndex = 5;
             this.btnExplore.Text = "Explore";
             this.btnExplore.Click += new System.EventHandler(this.btnExplore_Click);
             // 
-            // panel2
-            // 
-            this.panel2.BackColor = System.Drawing.Color.White;
-            this.panel2.Controls.Add(this.labelSongTitle);
-            this.panel2.Controls.Add(this.btnClose);
-            this.panel2.Location = new System.Drawing.Point(227, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1557, 88);
-            this.panel2.TabIndex = 1;
-            this.panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.panel2_Paint);
-            // 
-            // labelSongTitle
-            // 
-            this.labelSongTitle.AutoSize = true;
-            this.labelSongTitle.Font = new System.Drawing.Font("Book Antiqua", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSongTitle.Location = new System.Drawing.Point(38, 22);
-            this.labelSongTitle.Name = "labelSongTitle";
-            this.labelSongTitle.Size = new System.Drawing.Size(305, 51);
-            this.labelSongTitle.TabIndex = 3;
-            this.labelSongTitle.Text = "SONG TITLE ";
-            // 
-            // btnClose
-            // 
-            this.btnClose.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
-            this.btnClose.HoverState.ImageSize = new System.Drawing.Size(64, 64);
-            this.btnClose.Image = global::trinhphatnhac5._0.Properties.Resources.close;
-            this.btnClose.ImageOffset = new System.Drawing.Point(0, 0);
-            this.btnClose.ImageRotate = 0F;
-            this.btnClose.Location = new System.Drawing.Point(1474, 13);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.PressedState.ImageSize = new System.Drawing.Size(64, 64);
-            this.btnClose.Size = new System.Drawing.Size(64, 54);
-            this.btnClose.TabIndex = 0;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.LightSteelBlue;
+            this.panel3.Controls.Add(this.btnSort);
+            this.panel3.Controls.Add(this.btnShuffle);
             this.panel3.Controls.Add(this.btnDelete);
             this.panel3.Controls.Add(this.label3);
             this.panel3.Controls.Add(this.labeCurrentTime);
@@ -228,6 +234,21 @@
             this.panel3.TabIndex = 2;
             this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
             // 
+            // btnShuffle
+            // 
+            this.btnShuffle.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnShuffle.HoverState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnShuffle.Image = global::trinhphatnhac5._0.Properties.Resources.shuffle;
+            this.btnShuffle.ImageOffset = new System.Drawing.Point(0, 0);
+            this.btnShuffle.ImageRotate = 0F;
+            this.btnShuffle.ImageSize = new System.Drawing.Size(74, 74);
+            this.btnShuffle.Location = new System.Drawing.Point(338, 52);
+            this.btnShuffle.Name = "btnShuffle";
+            this.btnShuffle.PressedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnShuffle.Size = new System.Drawing.Size(90, 74);
+            this.btnShuffle.TabIndex = 20;
+            this.btnShuffle.Click += new System.EventHandler(this.btnShuffle_Click);
+            // 
             // btnDelete
             // 
             this.btnDelete.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
@@ -236,7 +257,7 @@
             this.btnDelete.ImageOffset = new System.Drawing.Point(0, 0);
             this.btnDelete.ImageRotate = 0F;
             this.btnDelete.ImageSize = new System.Drawing.Size(74, 74);
-            this.btnDelete.Location = new System.Drawing.Point(213, 54);
+            this.btnDelete.Location = new System.Drawing.Point(195, 49);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.PressedState.ImageSize = new System.Drawing.Size(64, 64);
             this.btnDelete.Size = new System.Drawing.Size(90, 74);
@@ -344,16 +365,21 @@
             this.TrackBar1.ThumbColor = System.Drawing.Color.FromArgb(((int)(((byte)(160)))), ((int)(((byte)(113)))), ((int)(((byte)(255)))));
             this.TrackBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.TrackBar1_Scroll);
             // 
-            // tabControl1
+            // timer1
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Location = new System.Drawing.Point(214, 34);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1578, 893);
-            this.tabControl1.TabIndex = 3;
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Location = new System.Drawing.Point(8, 39);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(1562, 846);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Playlists";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // tabPage1
             // 
@@ -367,6 +393,17 @@
             this.tabPage1.Text = "Playing";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // axWindowsMediaPlayer1
+            // 
+            this.axWindowsMediaPlayer1.Enabled = true;
+            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
+            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(1559, 967);
+            this.axWindowsMediaPlayer1.TabIndex = 0;
+            this.axWindowsMediaPlayer1.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.axWindowsMediaPlayer1_PlayStateChange);
+            this.axWindowsMediaPlayer1.Enter += new System.EventHandler(this.axWindowsMediaPlayer1_Enter);
+            // 
             // guna2PictureBox1
             // 
             this.guna2PictureBox1.Image = global::trinhphatnhac5._0.Properties.Resources.videoframe_4451;
@@ -379,19 +416,10 @@
             this.guna2PictureBox1.TabIndex = 0;
             this.guna2PictureBox1.TabStop = false;
             // 
-            // axWindowsMediaPlayer1
-            // 
-            this.axWindowsMediaPlayer1.Enabled = true;
-            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 3);
-            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
-            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
-            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(1559, 967);
-            this.axWindowsMediaPlayer1.TabIndex = 0;
-            this.axWindowsMediaPlayer1.Enter += new System.EventHandler(this.axWindowsMediaPlayer1_Enter);
-            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.TrackList);
+            this.tabPage2.Controls.Add(this.btnClear);
             this.tabPage2.Controls.Add(this.btnSelect);
             this.tabPage2.Location = new System.Drawing.Point(8, 39);
             this.tabPage2.Name = "tabPage2";
@@ -402,22 +430,11 @@
             this.tabPage2.UseVisualStyleBackColor = true;
             this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
             // 
-            // TrackList
-            // 
-            this.TrackList.Font = new System.Drawing.Font("Times New Roman", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TrackList.FormattingEnabled = true;
-            this.TrackList.ItemHeight = 49;
-            this.TrackList.Location = new System.Drawing.Point(0, 77);
-            this.TrackList.Name = "TrackList";
-            this.TrackList.Size = new System.Drawing.Size(1496, 641);
-            this.TrackList.TabIndex = 2;
-            this.TrackList.Click += new System.EventHandler(this.TrackList_Click);
-            // 
             // btnSelect
             // 
             this.btnSelect.BackColor = System.Drawing.Color.LightSteelBlue;
             this.btnSelect.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSelect.Location = new System.Drawing.Point(3, 0);
+            this.btnSelect.Location = new System.Drawing.Point(0, 3);
             this.btnSelect.Name = "btnSelect";
             this.btnSelect.Size = new System.Drawing.Size(224, 81);
             this.btnSelect.TabIndex = 1;
@@ -425,21 +442,56 @@
             this.btnSelect.UseVisualStyleBackColor = false;
             this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
             // 
-            // tabPage3
+            // btnClear
             // 
-            this.tabPage3.Location = new System.Drawing.Point(8, 39);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(1562, 846);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Playlists";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.btnClear.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnClear.HoverState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnClear.Image = global::trinhphatnhac5._0.Properties.Resources.clear;
+            this.btnClear.ImageOffset = new System.Drawing.Point(0, 0);
+            this.btnClear.ImageRotate = 0F;
+            this.btnClear.Location = new System.Drawing.Point(266, 3);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.PressedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnClear.Size = new System.Drawing.Size(84, 84);
+            this.btnClear.TabIndex = 18;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
-            // timer1
+            // btnSort
             // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 1000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.btnSort.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnSort.HoverState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnSort.Image = global::trinhphatnhac5._0.Properties.Resources.sorting;
+            this.btnSort.ImageOffset = new System.Drawing.Point(0, 0);
+            this.btnSort.ImageRotate = 0F;
+            this.btnSort.ImageSize = new System.Drawing.Size(74, 74);
+            this.btnSort.Location = new System.Drawing.Point(65, 52);
+            this.btnSort.Name = "btnSort";
+            this.btnSort.PressedState.ImageSize = new System.Drawing.Size(64, 64);
+            this.btnSort.Size = new System.Drawing.Size(90, 74);
+            this.btnSort.TabIndex = 19;
+            this.btnSort.Click += new System.EventHandler(this.btnSort_Click);
+            // 
+            // TrackList
+            // 
+            this.TrackList.Font = new System.Drawing.Font("Times New Roman", 16.125F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TrackList.FormattingEnabled = true;
+            this.TrackList.ItemHeight = 49;
+            this.TrackList.Location = new System.Drawing.Point(3, 80);
+            this.TrackList.Name = "TrackList";
+            this.TrackList.Size = new System.Drawing.Size(1556, 739);
+            this.TrackList.TabIndex = 2;
+            this.TrackList.Click += new System.EventHandler(this.TrackList_Click);
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Location = new System.Drawing.Point(214, 34);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(1578, 893);
+            this.tabControl1.TabIndex = 3;
             // 
             // Form1
             // 
@@ -447,8 +499,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(1792, 1043);
-            this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.tabControl1);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -459,16 +511,16 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.guna2PictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.guna2PictureBox1)).EndInit();
             this.tabPage2.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -491,19 +543,22 @@
         private Guna.UI2.WinForms.Guna2ImageButton btnClose;
         private System.Windows.Forms.Label labelSongTitle;
         private Guna.UI2.WinForms.Guna2Shapes indicator;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button btnSelect;
-        private System.Windows.Forms.ListBox TrackList;
-        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
         private System.Windows.Forms.Label labeCurrentTime;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private Guna.UI2.WinForms.Guna2ImageButton btnDelete;
+        private Guna.UI2.WinForms.Guna2ImageButton btnShuffle;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPage1;
         private Guna.UI2.WinForms.Guna2PictureBox guna2PictureBox1;
+        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private Guna.UI2.WinForms.Guna2ImageButton btnSort;
+        private Guna.UI2.WinForms.Guna2ImageButton btnClear;
+        private System.Windows.Forms.ListBox TrackList;
+        private System.Windows.Forms.Button btnSelect;
+        private System.Windows.Forms.TabControl tabControl1;
     }
 }
 

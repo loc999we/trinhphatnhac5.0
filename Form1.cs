@@ -9,15 +9,28 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AxWMPLib;
-using TagLib;
 using Guna.UI2.WinForms;
 using trinhphatnhac5._0.Properties;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace trinhphatnhac5._0
 {
     public partial class Form1 : Form
     {
+        // Cập nhật list box khi dùng clear()
+        private void UpdateTrackListUI()
+        {
+            TrackList.Items.Clear();
+            Node<Song> temp = Playlist.GetFirst();
+            while (temp != null)
+            {
+                TrackList.Items.Add(temp.element);
+                temp = temp.flink;
+            }
+        // Giữ cho STT hiển thị đúng
+            for (int i = 0; i < TrackList.Items.Count; i++)
+                TrackList.Items[i] = TrackList.Items[i];
+        }
         //Cập nhật tên hiển thị bài hát
         private void UpdateSongTitle(string name, bool isVisible)
         {
@@ -58,15 +71,23 @@ namespace trinhphatnhac5._0
         }
         private void RefreshSTT()
         {
-            // Duyệt tất cả các bài hát trong ListBox
-            for (int i = 0; i < TrackList.Items.Count; i++)
+            // 1. Duyệt qua LinkedList để cập nhật thuộc tính STT bên trong mỗi đối tượng Song
+            // Chúng ta bắt đầu từ Node đầu tiên
+            Node<Song> temp = Playlist.GetFirst();
+            int count = 1;
+
+            while (temp != null)
             {
-                if (TrackList.Items[i] is Song s)
+                if (temp.element != null)
                 {
-                    s.STT = i + 1; // Gán số thứ tự 1, 2, 3...
+                    temp.element.STT = count; // Gán số thứ tự mới
+                    count++;
                 }
+                temp = temp.flink; // Nhảy sang Node kế tiếp (Duyệt danh sách liên kết)
             }
-            // Ép ListBox nạp lại dữ liệu để chuyển từ số 0 sang số vừa gán
+
+            // 2. Ép ListBox nạp lại giao diện
+            // ListBox không tự biết dữ liệu bên trong Song đã đổi, nên ta cần "refresh" nó
             for (int i = 0; i < TrackList.Items.Count; i++)
             {
                 TrackList.Items[i] = TrackList.Items[i];
@@ -91,6 +112,8 @@ namespace trinhphatnhac5._0
             InitializeComponent();
         }
 
+        private DoublyLinkedList<Song> Playlist = new DoublyLinkedList<Song>();
+        private Node<Song> currentNode = null; // Node đang phát hiện tại
         private void Form1_Load(object sender, EventArgs e)
         {
             //Điều chỉnh âm lượng volumne khớp với WMP
@@ -107,146 +130,158 @@ namespace trinhphatnhac5._0
                 for (int i = 0; i < openfiledialog.FileNames.Length; i++)
                 {
                     //Tạo đối tượng Song từ dữ liệu chọn được
-                    Song newSong = new Song();
+                    Song newSong = new Song ();
+                    // Gán giá trị đường dẫn
                     newSong.Name = openfiledialog.SafeFileNames[i];
                     newSong.Path = openfiledialog.FileNames[i];
-
-                    // Thêm đối tượng vào list box
+                    Playlist.Insert(newSong); // Thêm vào LinkedList
+                    // Thêm bài hát vào list box
                     this.TrackList.Items.Add(newSong);
                 }
-                RefreshSTT(); // Cập nhật hàm thứ tự
+                RefreshSTT(); // Cập nhật STT
             }
         }
 
         private void TrackList_Click(object sender, EventArgs e)
         {
-            // Kiểm tra người dùng có chọn dòng nào không
+            // Kiểm tra dòng nào được chọn không
             if (TrackList.SelectedIndex != -1)
             {
-                // Lấy đối tượng Song từ dòng đang được chọn
-                // Ép kiểu (cast) Item về lại kiểu Song
-                Song selectedSong = (Song)TrackList.SelectedItem;
-
-                // Gán đường dẫn vào Player từ thuộc tính Path của class Song
-                axWindowsMediaPlayer1.URL = selectedSong.Path;
-
-                this.Text = "Đang phát: " + selectedSong.Name; // hiển thị tên trên label
-            }
-            // Cập nhật ảnh
-            if (TrackList.SelectedItem != null)
-            {
-                Song selectedSong = (Song)TrackList.SelectedItem;
-                axWindowsMediaPlayer1.URL = selectedSong.Path;
-
-                // Cập nhật ảnh ngay khi double click vào bài hát
-                UpdateSongImage(selectedSong.Path);
-                // Cập nhật nhãn tên bài hát
-                UpdateSongTitle(selectedSong.Name, true);
-                axWindowsMediaPlayer1.Ctlcontrols.play();
-            }
-            
-        }
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            if (TrackList.Items.Count > 0)
-            {
-                if (TrackList.SelectedIndex == -1)
+                //Tìm Node tương ứng trong LinkedList
+                currentNode = Playlist.GetNodeAt(TrackList.SelectedIndex);
+                if (currentNode != null)
                 {
-                    TrackList.SelectedIndex = 0;
-                }
-                else if (TrackList.SelectedIndex > 0)
-                {
-                    // Giảm vị trí đi 1
-                    TrackList.SelectedIndex = TrackList.SelectedIndex - 1;
-                }
-                else
-                {
-                    // Nếu đang ở bài đầu thì nhảy xuống bài cuối
-                    TrackList.SelectedIndex = TrackList.Items.Count - 1;
-                }
-
-                // 1. Lấy đối tượng Song đang được chọn
-                if (TrackList.SelectedItem != null)
-                {
-                    Song selectedSong = (Song)TrackList.SelectedItem;
-
-                    // 2. Phát bài mới bằng đường dẫn lấy từ đối tượng Song
+                    // Lấy dữ liệu bài hát từ Node 
+                    Song selectedSong = currentNode.element;
+                    //Cập nhật Player và Giao diện
                     axWindowsMediaPlayer1.URL = selectedSong.Path;
                     axWindowsMediaPlayer1.Ctlcontrols.play();
-
                     UpdateSongImage(selectedSong.Path);
                     UpdateSongTitle(selectedSong.Name, true);
                 }
+            }
+        }
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra null
+            if (Playlist.IsEmpty())
+            {
+                return;
+            }
+            // Xác định Node phía trước
+            if (currentNode == null || currentNode.blink == null)
+            {
+                // Nếu chưa chọn bài nào hay bài đầu tiên thì về bài cuối cùng
+                currentNode = Playlist.GetLast();
+            }
+            else
+            {
+                // Sử dụng blink để lùi lại 1 Node
+                currentNode = currentNode.blink;
+            }
+
+            // Cập nhật nhạc và giao diện từ Node hiện tại
+            if (currentNode != null)
+            {
+                Song prevSong = currentNode.element; // Lấy dữ liệu bài hát từ Node
+
+                // Phát nhạc bằng đường dẫn từ đối tượng Song
+                axWindowsMediaPlayer1.URL = prevSong.Path;
+                axWindowsMediaPlayer1.Ctlcontrols.play();
+
+                // Đồng bộ giao diện ListBox
+                TrackList.SelectedItem = prevSong;
+                // Cập nhật các thành phần hiển thị khác
+                UpdateSongImage(prevSong.Path);
+                UpdateSongTitle(prevSong.Name, true);
+                this.Text = "Đang phát: " + prevSong.Name;
             }
         }
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (TrackList.Items.Count > 0)
+            // Kiểm tra null
+            if (Playlist.IsEmpty())
             {
-                // Nếu chưa chọn bài nào, mặc định chọn bài đầu
-                if (TrackList.SelectedIndex == -1)
+                MessageBox.Show("Danh sách phát đang trống!");
+                return;
+            }
+
+            //Xác định Node tiếp theo
+            if (isShuffle)
+            {
+                // Chế độ ngẫu nhiên
+                Random rand = new Random();
+                int randomIndex = rand.Next(0, TrackList.Items.Count);
+                currentNode = Playlist.GetNodeAt(randomIndex);
+            }
+            else
+            {
+                // Chế độ tuần tự
+                if (currentNode == null || currentNode.flink == null)
                 {
-                    TrackList.SelectedIndex = 0;
-                }
-                else if (TrackList.SelectedIndex < TrackList.Items.Count - 1)
-                {
-                    // Tăng vị trí lên 1
-                    TrackList.SelectedIndex = TrackList.SelectedIndex + 1;
+                    currentNode = Playlist.GetFirst();
                 }
                 else
                 {
-                    // Nếu là bài cuối thì quay về bài đầu
-                    TrackList.SelectedIndex = 0;
+                    currentNode = currentNode.flink;
                 }
-                if (TrackList.SelectedItem != null)
-                {
-                    Song selectedSong = (Song)TrackList.SelectedItem;
+            }
+            // Cập nhật nhạc và giao diện
+            if (currentNode != null)
+            {
+                Song nextSong = currentNode.element;
 
-                    //Phát bài mới bằng đường dẫn lấy từ đối tượng Song
-                    axWindowsMediaPlayer1.URL = selectedSong.Path;
-                    axWindowsMediaPlayer1.Ctlcontrols.play();
+                axWindowsMediaPlayer1.URL = nextSong.Path;
+                axWindowsMediaPlayer1.Ctlcontrols.play();
 
-                    UpdateSongImage(selectedSong.Path);
-                    UpdateSongTitle(selectedSong.Name, true);
-                }
-
+                TrackList.SelectedItem = nextSong;
+                UpdateSongImage(nextSong.Path);
+                UpdateSongTitle(nextSong.Name, true);
+                this.Text = "Đang phát: " + nextSong.Name;
             }
         }
         private void btnPlay(object sender, EventArgs e)
         {
-            if (TrackList.Items.Count == 0)
+            // Kiểm tra danh sách trống
+            if (Playlist.IsEmpty())
             {
                 MessageBox.Show("Danh sách trống, vui lòng chọn file nhạc!");
                 return;
             }
 
-            // Chưa chọn bài nào trong ListBox, mặc định chọn bài đầu tiên
-            if (TrackList.SelectedIndex == -1)
-            {
-                TrackList.SelectedIndex = 0;
-            }
-
-            // 3. Xử lý Phát/Dừng
+            // Phát, tạm dừng
             if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPlaying)
             {
                 axWindowsMediaPlayer1.Ctlcontrols.pause();
             }
+            else if (axWindowsMediaPlayer1.playState == WMPLib.WMPPlayState.wmppsPaused)
+            {
+                // Nếu đang tạm dừng thì tiếp tục phát bài đó
+                axWindowsMediaPlayer1.Ctlcontrols.play();
+            }
             else
             {
-                // Lấy đối tượng Song đang được chọn trong ListBox
-                if (TrackList.SelectedItem != null)
+                // Nếu người dùng chưa chọn dòng nào trên UI, mặc định chọn dòng đầu tiên
+                if (TrackList.SelectedIndex == -1)
                 {
-                    Song selectedSong = (Song)TrackList.SelectedItem;
+                    TrackList.SelectedIndex = 0;
+                }
+                // Cập nhật currentNode dựa trên lựa chọn hiện tại của ListBox
+                currentNode = Playlist.GetNodeAt(TrackList.SelectedIndex);
+                if (currentNode != null)
+                {
+                    Song selectedSong = currentNode.element;
 
-                    // Kiểm tra nếu là bài mới hoặc vừa mở app
-                    // So sánh URL hiện tại của Player với đường dẫn (Path) của bài hát
-                    if (string.IsNullOrEmpty(axWindowsMediaPlayer1.URL) || axWindowsMediaPlayer1.URL != selectedSong.Path)
+                    // Kiểm tra nếu bài hát mới khác với bài đang nạp trong Player
+                    if (axWindowsMediaPlayer1.URL != selectedSong.Path)
                     {
                         axWindowsMediaPlayer1.URL = selectedSong.Path;
                     }
-
-                    // 3. Chạy nhạc
                     axWindowsMediaPlayer1.Ctlcontrols.play();
+                    // Cập nhật giao diện
+                    UpdateSongImage(selectedSong.Path);
+                    UpdateSongTitle(selectedSong.Name, true);
+                    this.Text = "Đang phát: " + selectedSong.Name;
                 }
             }
         }
@@ -256,59 +291,61 @@ namespace trinhphatnhac5._0
         }
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            // Kiểm tra xem người dùng đã chọn bài nào trong ListBox chưa
             if (TrackList.SelectedIndex != -1)
             {
-                // Hỏi xác nhận trước khi xóa
                 DialogResult confirm = MessageBox.Show("Bạn có muốn xóa bài hát này khỏi danh sách?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (confirm == DialogResult.Yes)
                 {
-                    // Lấy đối tượng Song đang chọn
-                    Song selectedSong = (Song)TrackList.SelectedItem;
+                    // Lấy vị trí đang chọn
+                    int currentIndex = TrackList.SelectedIndex;
 
-                    // Nếu bài đang xóa chính là bài đang phát thì dừng phát nhạc
-                    if (axWindowsMediaPlayer1.URL == selectedSong.Path)
+                    // Tìm Node tương ứng trong LinkedList (Quan trọng!)
+                    Node<Song> nodeToDelete = Playlist.GetNodeAt(currentIndex);
+
+                    if (nodeToDelete != null)
                     {
-                        axWindowsMediaPlayer1.Ctlcontrols.stop();
-                        axWindowsMediaPlayer1.URL = ""; // Reset đường dẫn
+                        //Nếu bài đang xóa chính là bài đang phát (currentNode)
+                        if (currentNode == nodeToDelete)
+                        {
+                            axWindowsMediaPlayer1.Ctlcontrols.stop();
+                            axWindowsMediaPlayer1.URL = "";
+                            currentNode = null; // Reset con trỏ về rỗng
 
-                        // Reset giao diện về trạng thái chờ
-                        labeCurrentTime.Text = "00:00";
-                        label3.Text = "00:00";
-                        TrackBar1.Value = 0;
-                        labelSongTitle.Visible = false;
-                        labelSongTitle.Text = "";
+                            labeCurrentTime.Text = "00:00";
+                            label3.Text = "00:00";
+                            TrackBar1.Value = 0;
+                            labelSongTitle.Text = "";
+                        }
+
+                        // Xóa bài hát khỏi LinkedList 
+                        Playlist.Remove(nodeToDelete);
+
+                        // Xóa bài hát khỏi ListBox 
+                        TrackList.Items.RemoveAt(currentIndex);
+
+                        //Cập nhật lại số thứ tự hiển thị
+                        RefreshSTT();
                     }
-
-                    //Xóa bài hát khỏi ListBo
-                    TrackList.Items.RemoveAt(TrackList.SelectedIndex);
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn một bài hát trong danh sách để xóa!", "Thông báo");
+                MessageBox.Show("Vui lòng chọn một bài hát để xóa!");
             }
         }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-         
-        }
-       
         private void guna2Button1_Click(object sender, EventArgs e)
         {
             // Khi bấm nút playing thì nhảy thanh hồng
             indicator.Top = btnPlaying.Top + 11;
             tabControl1.SelectedIndex = 0;
-        }
-
+        }      
         private void btnClose_Click(object sender, EventArgs e)
         {
             // Thiết kế nút close
             DialogResult result = MessageBox.Show("Bạn có muốn thoát không?", "Thoát", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
-             this.Close();
+            this.Close();
         }
 
         private void btnExplore_Click(object sender, EventArgs e)
@@ -345,6 +382,86 @@ namespace trinhphatnhac5._0
                 label3.Text = FormatTime(axWindowsMediaPlayer1.currentMedia.duration);
             }
         }
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            //  Kiểm tra danh sách 
+            if (TrackList.Items.Count == 0) return;
+
+            // Xác nhận từ người dùng
+            DialogResult result = MessageBox.Show("Bạn có muốn xóa toàn bộ danh sách phát?", "Xác nhận Clear",
+                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                // Đồng bộ trình phát, dừng nhạc và xóa URL 
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
+                axWindowsMediaPlayer1.URL = "";
+
+                // Xóa dữ liệu gốc
+                Playlist.Clear(); // Xóa trong LinkedList
+                currentNode = null; // Reset con trỏ đang phát
+
+                // Đồng bộ giao diện
+                TrackList.Items.Clear(); // Xóa danh sách hiển thị
+
+                // Reset các nhãn thời gian và tiêu đề
+                labelSongTitle.Text = "Chưa có bài hát";
+                labeCurrentTime.Text = "00:00";
+                label3.Text = "00:00";
+                TrackBar1.Value = 0;
+
+                // Reset ảnh bìa về ảnh mặc định
+                guna2PictureBox1.Image = Properties.Resources.Lauriel_AOV;
+                // Cập nhật tiêu đề Form
+                this.Text = "Trình phát nhạc";
+            }
+        }
+        bool isSorted = false;
+        private void btnSort_Click(object sender, EventArgs e)
+        {
+            if (!isSorted)
+            {
+                // Sắp xếp từ a đên z
+                Playlist.BubbleSort((s1, s2) => string.Compare((s1 as Song).Name, (s2 as Song).Name));
+                btnSort.Text = "Trả về ban đầu";
+            }
+            else
+            {
+                // Sắp xếp theo STT (Về ban đầu)
+                Playlist.BubbleSort((s1, s2) => (s1 as Song).STT.CompareTo((s2 as Song).STT));
+                btnSort.Text = "Sắp xếp A-Z";
+            }
+            isSorted = !isSorted;
+            UpdateTrackListUI();
+            RefreshSTT();
+        }
+        bool isShuffle = false;
+        private void btnShuffle_Click(object sender, EventArgs e)
+        {
+            isShuffle = !isShuffle; // Đảo trạng thái mỗi khi bấm
+            if (isShuffle)
+            {
+                btnShuffle.BackColor = Color.HotPink; // Đổi màu 
+            }
+            else
+            {
+                btnShuffle.BackColor = default; // Trả về màu cũ
+            }
+        }
+        private void axWindowsMediaPlayer1_PlayStateChange(object sender, AxWMPLib._WMPOCXEvents_PlayStateChangeEvent e)
+        {
+            if (e.newState == 8)
+            {
+                // Kiểm tra an toàn trước khi gọi Invoke
+                if (!this.IsDisposed)
+                {
+                    this.BeginInvoke(new MethodInvoker(delegate
+                    {
+                        // Gọi nút Next để nó tự chọn bài tiếp theo (có tính cả Shuffle)
+                        btnNext_Click(null, null);
+                    }));
+                }
+            }
+        }
 
         private void pictureBox1_Click_1(object sender, EventArgs e)
         {
@@ -358,7 +475,7 @@ namespace trinhphatnhac5._0
 
         private void panel3_Paint(object sender, PaintEventArgs e)
         {
-            
+
         }
 
         private void panel2_Paint(object sender, PaintEventArgs e)
@@ -371,7 +488,7 @@ namespace trinhphatnhac5._0
 
         }
 
-       
+
         private void btnVolume_Click(object sender, EventArgs e)
         {
 
@@ -390,6 +507,9 @@ namespace trinhphatnhac5._0
         {
 
         }
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
 
+        }
     }
 }

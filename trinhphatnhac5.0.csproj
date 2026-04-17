@@ -236,5 +236,17 @@
   <ItemGroup>
     <None Include="Resources\loupe.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sorting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\time-left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\search.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

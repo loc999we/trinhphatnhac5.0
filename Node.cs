@@ -6,21 +6,17 @@ using System.Threading.Tasks;
 
 namespace trinhphatnhac5._0
 {
-    public class Node
+    public class Node<T>
     {
-        public object element; // Dữ liệu lưu vào nút
-        public Node flink, blink; // Liên kết trỏ đến nút sau và trước
-        public Node()
-        {
-            //Khởi tạo nút header
-            element = null;
-            flink = blink = null;
-        }
-        public Node(object element)
-        {
-            this.element = element; // Gán dữ liệu bài vào nút
-            this.flink = null; // Mặc định chưa có liên kết trước và sau
-            this.blink = null;
-        }
+            public T element; // Bài hát node lưu trữ
+            public Node<T> flink, blink; // Dùng để trỏ bài tiếp theo, ngược lại
+
+            public Node(T element)
+            {
+                this.element = element; // Gán dữ liệu bài vào nút
+                this.flink = null; // Mặc định chưa có liên kết nút trước và sau
+                this.blink = null;
+            }
+        
     }
 }
